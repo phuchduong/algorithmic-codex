@@ -1,6 +1,6 @@
 # Algorithmic Codex
 
-This repository serves as a centralized reference library for functioning code snippets, algorithmic patterns, and system design principles. It is designed to act as a compendium of knowledge for rapid retrieval and implementation in future technical designs.
+This repository is a structured knowledge base for technical interview preparation, financial data automation, and engineering workflows. It focuses on clean, documented implementations of LeetCode challenges and practical Python utilities.
 
 ---
 
@@ -15,17 +15,27 @@ This repository serves as a centralized reference library for functioning code s
 
 ---
 
-## 🎯 Objectives
-The Codex is being developed to store and organize:
+## 📂 Repository Roadmap
 
-* **Algorithmic Patterns:** Python implementations of core data structures and LeetCode-style problem-solving logic.
-* **SQL References:** A collection of optimized queries, window functions, and data transformation snippets.
-* **System Design:** Documentation and blueprints for scalable architecture and distributed systems.
-* **Coding Boilerplates:** Production-ready functions for recurring engineering tasks.
+### 🧠 Interview Preparation
+* **LeetCode 75 (Python):** Focused on optimal patterns for common string, array, and algorithmic problems.
+* **SQL 50:** High-performance PostgreSQL queries covering filtering, joins, and data aggregation.
 
-## 🛠 Usage
-As the library grows, each entry will be categorized by logic pattern rather than difficulty, prioritizing searchability and real-world application.
+### 📈 Financial Automation
+* **yfinance Utilities:** Production-ready scripts to extract historical Bitcoin (BTC) price data, including yearly closing summaries and full historical exports to CSV.
+
+### 🛠️ Developer Tooling
+* **Environment Setup:** PowerShell scripts for streamlined Python installations using `winget`.
+* **Context Generation:** Custom automation tools to generate repository snapshots for AI-assisted development.
 
 ---
-*Generated and maintained by Phuc Duong.*
 
+## 🏗️ Project Structure
+```text
+./
+├── LeetCode 75/        # Logic patterns and string manipulations
+├── SQL 50/             # Optimized database queries
+├── Python/
+│   ├── yfinance/       # Market data extraction scripts
+│   └── setup/          # Environment configuration scripts
+└── context_generator.py # Repository documentation automation
