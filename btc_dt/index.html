@@ -6,13 +6,20 @@
     <title>BTC Price History</title>
     
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
     
     <style>
-        body { font-family: sans-serif; padding: 20px; background-color: #f8f9fa; }
+        body { font-family: sans-serif; padding: 20px; background-color: #f8f9fa; color: #333; }
         .container { max-width: 1000px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        h2 { text-align: center; color: #333; }
-        table.dataTable thead th { background-color: #f1f1f1; }
+        h2 { text-align: center; margin-bottom: 20px; }
+        
+        /* Footer Styling */
+        footer { margin-top: 40px; padding: 20px; border-top: 1px solid #ddd; font-size: 0.9em; }
+        .footer-content { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 20px; }
+        .footer-section h3 { margin-top: 0; font-size: 1.1em; color: #555; }
+        .footer-section ul { list-style: none; padding: 0; }
+        .footer-section li { margin-bottom: 8px; }
+        .footer-section a { color: #007bff; text-decoration: none; }
+        .footer-section a:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
@@ -28,6 +35,26 @@
         </thead>
         <tbody></tbody>
     </table>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>🔗 Project Links</h3>
+                <ul>
+                    <li><strong>Reference Site:</strong> <a href="https://phuchduong.github.io/algorithmic-codex/btc_dt/" target="_blank">phuchduong.github.io/algorithmic-codex/</a></li>
+                    <li><strong>Source Code:</strong> <a href="https://github.com/phuchduong/algorithmic-codex" target="_blank">github.com/phuchduong/algorithmic-codex</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>👤 Author</h3>
+                <p><strong>Phuc Duong</strong></p>
+                <ul>
+                    <li><strong>GitHub:</strong> <a href="https://github.com/phuchduong" target="_blank">@phuchduong</a></li>
+                    <li><strong>LinkedIn:</strong> <a href="https://www.linkedin.com/in/phuchduong/" target="_blank">in/phuchduong</a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
@@ -37,24 +64,20 @@
 <script>
     async function loadData() {
         try {
-            // Load local CSV using D3
             const data = await d3.csv("btc_full_history_to_today.csv");
 
-            // Initialize DataTable
             $('#btc-table').DataTable({
                 data: data,
                 columns: [
                     { 
                         data: "Date",
                         render: function(data) {
-                            // Extract YYYY-MM-DD
                             return data.split(' ')[0];
                         }
                     },
                     { 
                         data: "Close",
                         render: function(data) {
-                            // Format as USD $ with 2 decimals
                             let val = parseFloat(data);
                             return '$' + val.toLocaleString(undefined, {
                                 minimumFractionDigits: 2,
@@ -63,20 +86,13 @@
                         }
                     }
                 ],
-                order: [[0, 'desc']], // Sort by Date DESC
+                order: [[0, 'desc']],
                 pageLength: 20,
                 lengthMenu: [10, 20, 50, 100],
-                responsive: true,
-                dom: 'lfrtip', // Defines layout: length, filter, table, info, pagination
-                initComplete: function () {
-                    // This creates a simple text filter for the table
-                    // You can search "2023-05" to filter by Year and Month
-                    console.log("Table initialized.");
-                }
+                responsive: true
             });
         } catch (error) {
             console.error("Error loading CSV:", error);
-            alert("Could not load btc_full_history_to_today.csv. Ensure you are running this on a local server (e.g., Live Server) rather than opening the file directly in the browser.");
         }
     }
 
