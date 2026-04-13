@@ -9,24 +9,29 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
     <style>
+        /* --- CORE STYLES --- */
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; padding: 20px; background-color: #f4f7f9; color: #2d3436; }
         .container { max-width: 1000px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
         h2 { text-align: center; margin-bottom: 25px; font-weight: 700; color: #1e272e; }
 
-        /* Chart Styling */
-        #chart-container { width: 100%; margin-bottom: 40px; }
+        /* --- DATA TABLE SECTION STYLES --- */
+        .table-section { margin-bottom: 40px; }
+
+        /* --- D3 CHART SECTION STYLES --- */
+        .chart-section { margin-bottom: 40px; }
+        #chart-container { width: 100%; }
         .line { fill: none; stroke: #3182ce; stroke-width: 2; }
         .axis-label { font-size: 12px; fill: #718096; }
         .grid line { stroke: #edf2f7; stroke-opacity: 0.7; shape-rendering: crispEdges; }
-        .grid path { stroke-width: 0; }
 
+        /* --- FOOTER STYLES --- */
         footer { margin-top: 50px; padding-top: 30px; border-top: 1px solid #edf2f7; }
         .footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
         .footer-section h3 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: #718096; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
         .footer-list { list-style: none; padding: 0; margin: 0; }
         .footer-list li { margin-bottom: 12px; font-size: 0.95rem; }
         .footer-list label { font-weight: 600; color: #4a5568; min-width: 110px; display: inline-block; }
-        .footer-list a { color: #3182ce; text-decoration: none; transition: color 0.2s ease; }
+        .footer-list a { color: #3182ce; text-decoration: none; }
         .author-name { font-size: 1.1rem; font-weight: 700; color: #2d3748; margin-bottom: 10px; display: block; }
 
         @media (max-width: 600px) { .footer-grid { grid-template-columns: 1fr; gap: 30px; } }
@@ -37,19 +42,22 @@
 <div class="container">
     <h2>Bitcoin Price History</h2>
 
-    <table id="btc-table" class="display" style="width:100%">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Close Price (USD)</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
+    <section class="table-section">
+        <table id="btc-table" class="display" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Close Price (USD)</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </section>
 
-    <br><br>
-    <h3 class="chart-section-header">BTC Price - D3.js</h3>
-    <div id="chart-container"></div>
+    <section class="chart-section">
+        <h3 class="chart-section-header">BTC Price - D3.js</h3>
+        <div id="chart-container"></div>
+    </section>
 
     <footer>
         <div class="footer-grid">
@@ -77,84 +85,103 @@
 <script src="https://d3js.org/d3.v7.min.js"></script>
 
 <script>
-    async function loadData() {
-        try {
-            const data = await d3.csv("btc_full_history_to_today.csv");
+    /**
+     * MODULE: DATA LOADER & PARSER
+     * Centralized data fetching to avoid redundant requests.
+     */
+    const BTCApp = {
+        async init() {
+            try {
+                const rawData = await d3.csv("btc_full_history_to_today.csv");
+                const cleanData = this.parseData(rawData);
+                
+                // Initialize modules if their elements exist
+                if (document.getElementById('btc-table')) this.initTable(cleanData);
+                if (document.getElementById('chart-container')) this.initChart(cleanData);
+                
+            } catch (err) {
+                console.error("App Initialization Failed:", err);
+            }
+        },
 
-            // Format data for chart
+        parseData(data) {
             const parseTime = d3.timeParse("%Y-%m-%d");
-            data.forEach(d => {
-                d.dateObj = parseTime(d.Date.split(' ')[0]);
-                d.closeVal = +d.Close;
-            });
+            return data.map(d => ({
+                ...d,
+                dateObj: parseTime(d.Date.split(' ')[0]),
+                closeVal: +d.Close,
+                formattedDate: d.Date.split(' ')[0]
+            }));
+        },
 
-            // Initialize Table
+        /**
+         * MODULE: DATATABLES LOGIC
+         * Can be removed entirely without breaking D3.
+         */
+        initTable(data) {
             $('#btc-table').DataTable({
                 data: data,
                 columns: [
-                    { data: "Date", render: (data) => data.split(' ')[0] },
+                    { data: "formattedDate" },
                     { 
-                        data: "Close", 
-                        render: (data) => '$' + parseFloat(data).toLocaleString(undefined, {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2
-                        })
+                        data: "closeVal", 
+                        render: $.fn.dataTable.render.number(',', '.', 2, '$')
                     }
                 ],
                 order: [[0, 'desc']],
                 pageLength: 10
             });
+        },
 
-            // Render Chart
-            renderChart(data);
+        /**
+         * MODULE: D3 CHART LOGIC
+         * Can be removed entirely without breaking DataTable.
+         */
+        initChart(data) {
+            const container = document.getElementById('chart-container');
+            const margin = {top: 20, right: 30, bottom: 40, left: 60};
+            const width = container.offsetWidth - margin.left - margin.right;
+            const height = 400 - margin.top - margin.bottom;
 
-        } catch (error) {
-            console.error("Error loading CSV:", error);
-        }
-    }
+            const svg = d3.select("#chart-container")
+                .append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    function renderChart(data) {
-        const margin = {top: 20, right: 30, bottom: 40, left: 60},
-              width = document.getElementById('chart-container').offsetWidth - margin.left - margin.right,
-              height = 400 - margin.top - margin.bottom;
+            const x = d3.scaleTime()
+                .domain(d3.extent(data, d => d.dateObj))
+                .range([0, width]);
+            
+            const y = d3.scaleLinear()
+                .domain([0, d3.max(data, d => d.closeVal)])
+                .range([height, 0]);
 
-        const svg = d3.select("#chart-container")
-            .append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
-            .append("g")
-            .attr("transform", `translate(${margin.left},${margin.top})`);
+            // Axes
+            svg.append("g")
+                .attr("transform", `translate(0,${height})`)
+                .call(d3.axisBottom(x).ticks(6))
+                .attr("class", "axis-label");
 
-        // X axis
-        const x = d3.scaleTime()
-            .domain(d3.extent(data, d => d.dateObj))
-            .range([0, width]);
-        
-        svg.append("g")
-            .attr("transform", `translate(0,${height})`)
-            .call(d3.axisBottom(x).ticks(6))
-            .attr("class", "axis-label");
+            svg.append("g")
+                .call(d3.axisLeft(y).tickFormat(d => "$" + d3.format(",.0f")(d)))
+                .attr("class", "axis-label");
 
-        // Y axis
-        const y = d3.scaleLinear()
-            .domain([0, d3.max(data, d => d.closeVal)])
-            .range([height, 0]);
-        
-        svg.append("g")
-            .call(d3.axisLeft(y).tickFormat(d => "$" + d3.format(",.0f")(d)))
-            .attr("class", "axis-label");
-
-        // Line
-        svg.append("path")
-            .datum(data.sort((a, b) => a.dateObj - b.dateObj))
-            .attr("class", "line")
-            .attr("d", d3.line()
+            // Line Logic
+            const line = d3.line()
                 .x(d => x(d.dateObj))
-                .y(d => y(d.closeVal))
-            );
-    }
+                .y(d => y(d.closeVal));
 
-    loadData();
+            svg.append("path")
+                .datum(data.sort((a, b) => a.dateObj - b.dateObj))
+                .attr("class", "line")
+                .attr("d", line);
+        }
+    };
+
+    // Run application
+    BTCApp.init();
 </script>
 
 </body>
