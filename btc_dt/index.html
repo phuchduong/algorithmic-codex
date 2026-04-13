@@ -10,39 +10,150 @@
     
     <style>
         /* --- CORE STYLES --- 
-           General layout and typography settings for the dashboard body.
+           This section controls the general look of the entire page.
         */
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; padding: 20px; background-color: #f4f7f9; color: #2d3436; }
-        .container { max-width: 1000px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
-        h2 { text-align: center; margin-bottom: 25px; font-weight: 700; color: #1e272e; }
+        body { 
+            /* Defines the text font and fallback fonts if the first choice is missing */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            /* Adds 20 pixels of space inside the edges of the screen */
+            padding: 20px; 
+            /* Sets a very light grey-blue background color */
+            background-color: #f4f7f9; 
+            /* Sets the text color to a dark charcoal grey */
+            color: #2d3436; 
+        }
+
+        .container { 
+            /* Limits the width of the white box so it doesn't look too stretched on wide screens */
+            max-width: 1000px; 
+            /* Centers the box horizontally */
+            margin: auto; 
+            /* Makes the main box white */
+            background: white; 
+            /* Adds 30 pixels of padding inside the white box */
+            padding: 30px; 
+            /* Rounds the corners of the white box */
+            border-radius: 12px; 
+            /* Adds a soft, subtle shadow behind the box to make it 'pop' off the background */
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05); 
+        }
+
+        h2 { 
+            /* Centers the "Bitcoin Price History" title */
+            text-align: center; 
+            /* Adds space below the title */
+            margin-bottom: 25px; 
+            /* Makes the title text bold */
+            font-weight: 700; 
+            /* A slightly darker blue-black color for the heading */
+            color: #1e272e; 
+        }
 
         /* --- DATA TABLE SECTION STYLES --- 
-           Spacing for the jQuery DataTables container.
+           Controls the spacing for the table area.
         */
         .table-section { margin-bottom: 40px; }
 
         /* --- D3 CHART SECTION STYLES --- 
-           SVG styles for the D3 line chart visualization.
+           D3.js creates 'SVG' graphics (Scalable Vector Graphics). 
+           Think of these like digital drawings rather than text.
         */
         .chart-section { margin-bottom: 40px; }
         #chart-container { width: 100%; }
-        .line { fill: none; stroke: #3182ce; stroke-width: 2; }
-        .axis-label { font-size: 12px; fill: #718096; }
-        .grid line { stroke: #edf2f7; stroke-opacity: 0.7; shape-rendering: crispEdges; }
+        
+        .line { 
+            /* Removes any fill color from the line chart (so it's just a line, not a solid shape) */
+            fill: none; 
+            /* Sets the color of the graph line to a nice blue */
+            stroke: #3182ce; 
+            /* Sets the thickness of the graph line */
+            stroke-width: 2; 
+        }
+
+        .axis-label { 
+            /* Sets the size of the text on the graph axes (the dates and prices) */
+            font-size: 12px; 
+            /* Sets the color of the axis text to a medium grey */
+            fill: #718096; 
+        }
+
+        .grid line { 
+            /* Styles the faint background lines in the chart */
+            stroke: #edf2f7; 
+            /* Makes the grid lines semi-transparent */
+            stroke-opacity: 0.7; 
+            /* Ensures the grid lines look sharp and not blurry */
+            shape-rendering: crispEdges; 
+        }
 
         /* --- FOOTER STYLES --- 
-           Author information and project resource links.
+           The bottom area of the page containing links and author info.
         */
-        footer { margin-top: 50px; padding-top: 30px; border-top: 1px solid #edf2f7; }
-        .footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
-        .footer-section h3 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: #718096; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
-        .footer-list { list-style: none; padding: 0; margin: 0; }
-        .footer-list li { margin-bottom: 12px; font-size: 0.95rem; }
-        .footer-list label { font-weight: 600; color: #4a5568; min-width: 110px; display: inline-block; }
-        .footer-list a { color: #3182ce; text-decoration: none; }
-        .author-name { font-size: 1.1rem; font-weight: 700; color: #2d3748; margin-bottom: 10px; display: block; }
+        footer { 
+            margin-top: 50px; 
+            padding-top: 30px; 
+            /* Adds a thin horizontal line to separate the footer from the content above */
+            border-top: 1px solid #edf2f7; 
+        }
 
-        /* Responsive adjustment for mobile viewports */
+        .footer-grid { 
+            /* Uses 'Grid' layout to create two columns side-by-side */
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            /* Adds 40 pixels of space between the two columns */
+            gap: 40px; 
+        }
+
+        .footer-section h3 { 
+            /* Makes the footer headers (Project Links, Author) small and capitalized */
+            font-size: 0.85rem; 
+            text-transform: uppercase; 
+            /* Adds extra space between letters for a clean look */
+            letter-spacing: 1px; 
+            color: #718096; 
+            margin-bottom: 15px; 
+            /* Aligns the icon and text horizontally */
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+        }
+
+        .footer-list { 
+            /* Removes the default bullet points from the lists */
+            list-style: none; 
+            padding: 0; 
+            margin: 0; 
+        }
+
+        .footer-list li { margin-bottom: 12px; font-size: 0.95rem; }
+
+        .footer-list label { 
+            /* Bolds the labels like 'Reference:' or 'GitHub:' */
+            font-weight: 600; 
+            color: #4a5568; 
+            /* Ensures the labels take up a consistent width so the links align vertically */
+            min-width: 110px; 
+            display: inline-block; 
+        }
+
+        .footer-list a { 
+            /* Sets the link color to blue */
+            color: #3182ce; 
+            /* Removes the underline from links */
+            text-decoration: none; 
+        }
+
+        .author-name { 
+            /* Styles the author's name to be larger and bold */
+            font-size: 1.1rem; 
+            font-weight: 700; 
+            color: #2d3748; 
+            margin-bottom: 10px; 
+            display: block; 
+        }
+
+        /* Responsive adjustment: If the screen is narrower than 600px, 
+           stack the footer columns on top of each other instead of side-by-side. */
         @media (max-width: 600px) { .footer-grid { grid-template-columns: 1fr; gap: 30px; } }
     </style>
 </head>
@@ -119,9 +230,9 @@
             ...d,
             // Extract YYYY-MM-DD and convert to JS Date object for D3
             dateObj: parseTime(d.Date.split(' ')[0]),
-            // Unary plus operator converts string to number
+            // The '+' sign tells Javascript: "Treat this text as a number"
             closeVal: +d.Close,
-            // Keep a string version for easy display in the table
+            // Keep a clean version of the date string for the table display
             formattedDate: d.Date.split(' ')[0]
         }));
     }
@@ -129,24 +240,26 @@
     /**
      * SECTION: MODULE: DATATABLES
      * Configures and initializes the jQuery DataTables plugin.
+     * This function takes our translated data and builds the interactive table.
      */
     function InitDataTable(data) {
         try {
             // Safety check: ensure target element exists in DOM
             if (!document.getElementById('btc-table')) return;
             
+            // This command activates the DataTables plugin on our table
             $('#btc-table').DataTable({
                 data: data,
                 columns: [
-                    { data: "formattedDate" },
+                    { data: "formattedDate" }, // First column: Date
                     { 
-                        data: "closeVal", 
-                        // Currency formatting for the Close Price column
+                        data: "closeVal", // Second column: Price
+                        // This 'render' part adds the '$' and commas to the numbers automatically
                         render: $.fn.dataTable.render.number(',', '.', 2, '$')
                     }
                 ],
-                order: [[0, 'desc']], // Sort by date descending by default
-                pageLength: 10         // Default pagination size
+                order: [[0, 'desc']], // Start with the newest dates at the top
+                pageLength: 10         // Show only 10 rows at a time
             });
         } catch (err) {
             console.error("DataTable Initialization Failed:", err);
@@ -156,6 +269,7 @@
     /**
      * SECTION: MODULE: D3 CHART
      * Constructs a responsive SVG line chart using D3.js.
+     * This function uses math to draw the price line on the screen.
      */
     function InitD3Chart(data) {
         try {
@@ -163,11 +277,13 @@
             if (!container) return;
 
             // Define chart dimensions and margins for axis labels
+            // Set up the margins so the graph doesn't hit the edges of the box
             const margin = {top: 20, right: 30, bottom: 40, left: 60};
             const width = container.offsetWidth - margin.left - margin.right;
             const height = 400 - margin.top - margin.bottom;
 
             // Create SVG element and group container
+            // Select the container and place an 'SVG' (drawing canvas) inside it
             const svg = d3.select("#chart-container")
                 .append("svg")
                 .attr("width", width + margin.left + margin.right)
@@ -176,34 +292,40 @@
                 .attr("transform", `translate(${margin.left},${margin.top})`);
 
             // Initialize Time Scale for X-Axis
+            // SCALES: These are like 'map legends'. 
+            // They translate a Price (e.g., $50,000) into a pixel position on your screen.
             const x = d3.scaleTime()
-                .domain(d3.extent(data, d => d.dateObj))
-                .range([0, width]);
+                .domain(d3.extent(data, d => d.dateObj)) // Min and Max dates
+                .range([0, width]); // Maps them from left to right
             
             // Initialize Linear Scale for Y-Axis (Prices)
             const y = d3.scaleLinear()
-                .domain([0, d3.max(data, d => d.closeVal)])
-                .range([height, 0]);
+                .domain([0, d3.max(data, d => d.closeVal)]) // From 0 to the highest price
+                .range([height, 0]); // Maps them from bottom to top
 
             // Render X-Axis at the bottom
+            // Draw the Bottom Axis (Dates)
             svg.append("g")
                 .attr("transform", `translate(0,${height})`)
                 .call(d3.axisBottom(x).ticks(6))
                 .attr("class", "axis-label");
 
             // Render Y-Axis with currency formatting
+            // Draw the Left Axis (Prices)
             svg.append("g")
                 .call(d3.axisLeft(y).tickFormat(d => "$" + d3.format(",.0f")(d)))
                 .attr("class", "axis-label");
 
             // Define the line generator function
+            // Define how the line should be drawn (connect Date to Price)
             const line = d3.line()
                 .x(d => x(d.dateObj))
                 .y(d => y(d.closeVal));
 
             // Append the line path to the SVG
+            // Actually draw the blue line path on the canvas
             svg.append("path")
-                // Sort data chronologically to ensure the line draws correctly
+                // We sort the data by date first so the line goes left-to-right
                 .datum(data.sort((a, b) => a.dateObj - b.dateObj))
                 .attr("class", "line")
                 .attr("d", line);
@@ -215,6 +337,8 @@
     /**
      * SECTION: MAIN EXECUTION FLOW
      * Immediately Invoked Function Expression (IIFE) to handle async logic.
+     * This is the "Start Button" of the script. 
+     * It runs automatically as soon as the page loads.
      */
     (async () => {
         try {
@@ -224,12 +348,13 @@
             // Step 2: Transform raw strings into usable formats
             const parsed_data = parse_data(raw_data);
 
-            // Step 3: Trigger component rendering
+            // Step 3: Use that data to build the Table and the Chart
             InitDataTable(parsed_data);
             InitD3Chart(parsed_data);
             
         } catch (err) {
             // Global error handler for data loading/parsing failures
+            // If the CSV file is missing or the internet cuts out, this handles the error
             console.error("Critical Failure: Data could not be loaded or parsed.", err);
         }
     })();
