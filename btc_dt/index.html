@@ -86,39 +86,29 @@
 
 <script>
     /**
-     * MODULE: DATA LOADER & PARSER
-     * Centralized data fetching to avoid redundant requests.
+     * CORE DATA FUNCTIONS
      */
-    const BTCApp = {
-        async init() {
-            try {
-                const rawData = await d3.csv("btc_full_history_to_today.csv");
-                const cleanData = this.parseData(rawData);
-                
-                // Initialize modules if their elements exist
-                if (document.getElementById('btc-table')) this.initTable(cleanData);
-                if (document.getElementById('chart-container')) this.initChart(cleanData);
-                
-            } catch (err) {
-                console.error("App Initialization Failed:", err);
-            }
-        },
+    async function load_data(url) {
+        return await d3.csv(url);
+    }
 
-        parseData(data) {
-            const parseTime = d3.timeParse("%Y-%m-%d");
-            return data.map(d => ({
-                ...d,
-                dateObj: parseTime(d.Date.split(' ')[0]),
-                closeVal: +d.Close,
-                formattedDate: d.Date.split(' ')[0]
-            }));
-        },
+    function parse_data(data) {
+        const parseTime = d3.timeParse("%Y-%m-%d");
+        return data.map(d => ({
+            ...d,
+            dateObj: parseTime(d.Date.split(' ')[0]),
+            closeVal: +d.Close,
+            formattedDate: d.Date.split(' ')[0]
+        }));
+    }
 
-        /**
-         * MODULE: DATATABLES LOGIC
-         * Can be removed entirely without breaking D3.
-         */
-        initTable(data) {
+    /**
+     * MODULE: DATATABLES
+     */
+    function InitDataTable(data) {
+        try {
+            if (!document.getElementById('btc-table')) return;
+            
             $('#btc-table').DataTable({
                 data: data,
                 columns: [
@@ -131,14 +121,19 @@
                 order: [[0, 'desc']],
                 pageLength: 10
             });
-        },
+        } catch (err) {
+            console.error("DataTable Initialization Failed:", err);
+        }
+    }
 
-        /**
-         * MODULE: D3 CHART LOGIC
-         * Can be removed entirely without breaking DataTable.
-         */
-        initChart(data) {
+    /**
+     * MODULE: D3 CHART
+     */
+    function InitD3Chart(data) {
+        try {
             const container = document.getElementById('chart-container');
+            if (!container) return;
+
             const margin = {top: 20, right: 30, bottom: 40, left: 60};
             const width = container.offsetWidth - margin.left - margin.right;
             const height = 400 - margin.top - margin.bottom;
@@ -177,11 +172,27 @@
                 .datum(data.sort((a, b) => a.dateObj - b.dateObj))
                 .attr("class", "line")
                 .attr("d", line);
+        } catch (err) {
+            console.error("D3 Chart Initialization Failed:", err);
         }
-    };
+    }
 
-    // Run application
-    BTCApp.init();
+    /**
+     * MAIN EXECUTION FLOW
+     */
+    (async () => {
+        try {
+            const raw_data = await load_data("btc_full_history_to_today.csv");
+            const parsed_data = parse_data(raw_data);
+
+            // Render components independently
+            InitDataTable(parsed_data);
+            InitD3Chart(parsed_data);
+            
+        } catch (err) {
+            console.error("Critical Failure: Data could not be loaded or parsed.", err);
+        }
+    })();
 </script>
 
 </body>
