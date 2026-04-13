@@ -9,22 +9,30 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
     <style>
-        /* --- CORE STYLES --- */
+        /* --- CORE STYLES --- 
+           General layout and typography settings for the dashboard body.
+        */
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; padding: 20px; background-color: #f4f7f9; color: #2d3436; }
         .container { max-width: 1000px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
         h2 { text-align: center; margin-bottom: 25px; font-weight: 700; color: #1e272e; }
 
-        /* --- DATA TABLE SECTION STYLES --- */
+        /* --- DATA TABLE SECTION STYLES --- 
+           Spacing for the jQuery DataTables container.
+        */
         .table-section { margin-bottom: 40px; }
 
-        /* --- D3 CHART SECTION STYLES --- */
+        /* --- D3 CHART SECTION STYLES --- 
+           SVG styles for the D3 line chart visualization.
+        */
         .chart-section { margin-bottom: 40px; }
         #chart-container { width: 100%; }
         .line { fill: none; stroke: #3182ce; stroke-width: 2; }
         .axis-label { font-size: 12px; fill: #718096; }
         .grid line { stroke: #edf2f7; stroke-opacity: 0.7; shape-rendering: crispEdges; }
 
-        /* --- FOOTER STYLES --- */
+        /* --- FOOTER STYLES --- 
+           Author information and project resource links.
+        */
         footer { margin-top: 50px; padding-top: 30px; border-top: 1px solid #edf2f7; }
         .footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
         .footer-section h3 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: #718096; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
@@ -34,6 +42,7 @@
         .footer-list a { color: #3182ce; text-decoration: none; }
         .author-name { font-size: 1.1rem; font-weight: 700; color: #2d3748; margin-bottom: 10px; display: block; }
 
+        /* Responsive adjustment for mobile viewports */
         @media (max-width: 600px) { .footer-grid { grid-template-columns: 1fr; gap: 30px; } }
     </style>
 </head>
@@ -86,27 +95,44 @@
 
 <script>
     /**
-     * CORE DATA FUNCTIONS
+     * SECTION: CORE DATA FUNCTIONS
+     * Responsible for fetching and sanitizing data for downstream modules.
+     */
+
+    /**
+     * Fetches raw CSV data from a specified URL.
+     * @param {string} url - The path to the CSV file.
+     * @returns {Promise<Array>} - Resolves to an array of data objects.
      */
     async function load_data(url) {
         return await d3.csv(url);
     }
 
+    /**
+     * Maps raw strings into typed JavaScript objects (Dates, Numbers).
+     * @param {Array} data - The raw array from load_data.
+     * @returns {Array} - Sanitized objects with date objects and numeric prices.
+     */
     function parse_data(data) {
         const parseTime = d3.timeParse("%Y-%m-%d");
         return data.map(d => ({
             ...d,
+            // Extract YYYY-MM-DD and convert to JS Date object for D3
             dateObj: parseTime(d.Date.split(' ')[0]),
+            // Unary plus operator converts string to number
             closeVal: +d.Close,
+            // Keep a string version for easy display in the table
             formattedDate: d.Date.split(' ')[0]
         }));
     }
 
     /**
-     * MODULE: DATATABLES
+     * SECTION: MODULE: DATATABLES
+     * Configures and initializes the jQuery DataTables plugin.
      */
     function InitDataTable(data) {
         try {
+            // Safety check: ensure target element exists in DOM
             if (!document.getElementById('btc-table')) return;
             
             $('#btc-table').DataTable({
@@ -115,11 +141,12 @@
                     { data: "formattedDate" },
                     { 
                         data: "closeVal", 
+                        // Currency formatting for the Close Price column
                         render: $.fn.dataTable.render.number(',', '.', 2, '$')
                     }
                 ],
-                order: [[0, 'desc']],
-                pageLength: 10
+                order: [[0, 'desc']], // Sort by date descending by default
+                pageLength: 10         // Default pagination size
             });
         } catch (err) {
             console.error("DataTable Initialization Failed:", err);
@@ -127,17 +154,20 @@
     }
 
     /**
-     * MODULE: D3 CHART
+     * SECTION: MODULE: D3 CHART
+     * Constructs a responsive SVG line chart using D3.js.
      */
     function InitD3Chart(data) {
         try {
             const container = document.getElementById('chart-container');
             if (!container) return;
 
+            // Define chart dimensions and margins for axis labels
             const margin = {top: 20, right: 30, bottom: 40, left: 60};
             const width = container.offsetWidth - margin.left - margin.right;
             const height = 400 - margin.top - margin.bottom;
 
+            // Create SVG element and group container
             const svg = d3.select("#chart-container")
                 .append("svg")
                 .attr("width", width + margin.left + margin.right)
@@ -145,30 +175,35 @@
                 .append("g")
                 .attr("transform", `translate(${margin.left},${margin.top})`);
 
+            // Initialize Time Scale for X-Axis
             const x = d3.scaleTime()
                 .domain(d3.extent(data, d => d.dateObj))
                 .range([0, width]);
             
+            // Initialize Linear Scale for Y-Axis (Prices)
             const y = d3.scaleLinear()
                 .domain([0, d3.max(data, d => d.closeVal)])
                 .range([height, 0]);
 
-            // Axes
+            // Render X-Axis at the bottom
             svg.append("g")
                 .attr("transform", `translate(0,${height})`)
                 .call(d3.axisBottom(x).ticks(6))
                 .attr("class", "axis-label");
 
+            // Render Y-Axis with currency formatting
             svg.append("g")
                 .call(d3.axisLeft(y).tickFormat(d => "$" + d3.format(",.0f")(d)))
                 .attr("class", "axis-label");
 
-            // Line Logic
+            // Define the line generator function
             const line = d3.line()
                 .x(d => x(d.dateObj))
                 .y(d => y(d.closeVal));
 
+            // Append the line path to the SVG
             svg.append("path")
+                // Sort data chronologically to ensure the line draws correctly
                 .datum(data.sort((a, b) => a.dateObj - b.dateObj))
                 .attr("class", "line")
                 .attr("d", line);
@@ -178,18 +213,23 @@
     }
 
     /**
-     * MAIN EXECUTION FLOW
+     * SECTION: MAIN EXECUTION FLOW
+     * Immediately Invoked Function Expression (IIFE) to handle async logic.
      */
     (async () => {
         try {
+            // Step 1: Request data from source
             const raw_data = await load_data("btc_full_history_to_today.csv");
+            
+            // Step 2: Transform raw strings into usable formats
             const parsed_data = parse_data(raw_data);
 
-            // Render components independently
+            // Step 3: Trigger component rendering
             InitDataTable(parsed_data);
             InitD3Chart(parsed_data);
             
         } catch (err) {
+            // Global error handler for data loading/parsing failures
             console.error("Critical Failure: Data could not be loaded or parsed.", err);
         }
     })();
