@@ -9,117 +9,75 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
     <style>
-        /* --- CORE STYLES --- 
-           This section controls the general look of the entire page.
-        */
+        /* --- CORE STYLES --- */
         body { 
-            /* Defines the text font and fallback fonts if the first choice is missing */
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
-            /* Adds 20 pixels of space inside the edges of the screen */
             padding: 20px; 
-            /* Sets a very light grey-blue background color */
             background-color: #f4f7f9; 
-            /* Sets the text color to a dark charcoal grey */
             color: #2d3436; 
         }
 
         .container { 
-            /* Limits the width of the white box so it doesn't look too stretched on wide screens */
             max-width: 1000px; 
-            /* Centers the box horizontally */
             margin: auto; 
-            /* Makes the main box white */
             background: white; 
-            /* Adds 30 pixels of padding inside the white box */
             padding: 30px; 
-            /* Rounds the corners of the white box */
             border-radius: 12px; 
-            /* Adds a soft, subtle shadow behind the box to make it 'pop' off the background */
             box-shadow: 0 4px 20px rgba(0,0,0,0.05); 
         }
 
         h2 { 
-            /* Centers the "Bitcoin Price History" title */
             text-align: center; 
-            /* Adds space below the title */
             margin-bottom: 25px; 
-            /* Makes the title text bold */
             font-weight: 700; 
-            /* A slightly darker blue-black color for the heading */
             color: #1e272e; 
         }
 
-        /* --- DATA TABLE SECTION STYLES --- 
-           Controls the spacing for the table area.
-        */
-        .table-section { margin-bottom: 40px; }
-
-        /* --- D3 CHART SECTION STYLES --- 
-           D3.js creates 'SVG' graphics (Scalable Vector Graphics). 
-           Think of these like digital drawings rather than text.
-        */
-        .chart-section { margin-bottom: 40px; }
-        #chart-container { width: 100%; }
+        .table-section, .chart-section, .apex-section { margin-bottom: 40px; }
+        #chart-container, #apex-chart-container { width: 100%; }
         
         .line { 
-            /* Removes any fill color from the line chart (so it's just a line, not a solid shape) */
             fill: none; 
-            /* Sets the color of the graph line to a nice blue */
             stroke: #3182ce; 
-            /* Sets the thickness of the graph line */
             stroke-width: 2; 
         }
 
         .axis-label { 
-            /* Sets the size of the text on the graph axes (the dates and prices) */
             font-size: 12px; 
-            /* Sets the color of the axis text to a medium grey */
             fill: #718096; 
         }
 
         .grid line { 
-            /* Styles the faint background lines in the chart */
             stroke: #edf2f7; 
-            /* Makes the grid lines semi-transparent */
             stroke-opacity: 0.7; 
-            /* Ensures the grid lines look sharp and not blurry */
             shape-rendering: crispEdges; 
         }
 
-        /* --- FOOTER STYLES --- 
-           The bottom area of the page containing links and author info.
-        */
+        /* --- FOOTER STYLES --- */
         footer { 
             margin-top: 50px; 
             padding-top: 30px; 
-            /* Adds a thin horizontal line to separate the footer from the content above */
             border-top: 1px solid #edf2f7; 
         }
 
         .footer-grid { 
-            /* Uses 'Grid' layout to create two columns side-by-side */
             display: grid; 
             grid-template-columns: 1fr 1fr; 
-            /* Adds 40 pixels of space between the two columns */
             gap: 40px; 
         }
 
         .footer-section h3 { 
-            /* Makes the footer headers (Project Links, Author) small and capitalized */
             font-size: 0.85rem; 
             text-transform: uppercase; 
-            /* Adds extra space between letters for a clean look */
             letter-spacing: 1px; 
             color: #718096; 
             margin-bottom: 15px; 
-            /* Aligns the icon and text horizontally */
             display: flex; 
             align-items: center; 
             gap: 8px; 
         }
 
         .footer-list { 
-            /* Removes the default bullet points from the lists */
             list-style: none; 
             padding: 0; 
             margin: 0; 
@@ -128,23 +86,18 @@
         .footer-list li { margin-bottom: 12px; font-size: 0.95rem; }
 
         .footer-list label { 
-            /* Bolds the labels like 'Reference:' or 'GitHub:' */
             font-weight: 600; 
             color: #4a5568; 
-            /* Ensures the labels take up a consistent width so the links align vertically */
             min-width: 110px; 
             display: inline-block; 
         }
 
         .footer-list a { 
-            /* Sets the link color to blue */
             color: #3182ce; 
-            /* Removes the underline from links */
             text-decoration: none; 
         }
 
         .author-name { 
-            /* Styles the author's name to be larger and bold */
             font-size: 1.1rem; 
             font-weight: 700; 
             color: #2d3748; 
@@ -152,8 +105,6 @@
             display: block; 
         }
 
-        /* Responsive adjustment: If the screen is narrower than 600px, 
-           stack the footer columns on top of each other instead of side-by-side. */
         @media (max-width: 600px) { .footer-grid { grid-template-columns: 1fr; gap: 30px; } }
     </style>
 </head>
@@ -177,6 +128,11 @@
     <section class="chart-section">
         <h3 class="chart-section-header">BTC Price - D3.js</h3>
         <div id="chart-container"></div>
+    </section>
+
+    <section class="apex-section">
+        <h3 class="chart-section-header">BTC Price - ApexCharts</h3>
+        <div id="apex-chart-container"></div>
     </section>
 
     <footer>
@@ -204,87 +160,52 @@
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://d3js.org/d3.v7.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
 <script>
-    /**
-     * SECTION: CORE DATA FUNCTIONS
-     * Responsible for fetching and sanitizing data for downstream modules.
-     */
-
-    /**
-     * Fetches raw CSV data from a specified URL.
-     * @param {string} url - The path to the CSV file.
-     * @returns {Promise<Array>} - Resolves to an array of data objects.
-     */
     async function load_data(url) {
         return await d3.csv(url);
     }
 
-    /**
-     * Maps raw strings into typed JavaScript objects (Dates, Numbers).
-     * @param {Array} data - The raw array from load_data.
-     * @returns {Array} - Sanitized objects with date objects and numeric prices.
-     */
     function parse_data(data) {
         const parseTime = d3.timeParse("%Y-%m-%d");
         return data.map(d => ({
             ...d,
-            // Extract YYYY-MM-DD and convert to JS Date object for D3
             dateObj: parseTime(d.Date.split(' ')[0]),
-            // The '+' sign tells Javascript: "Treat this text as a number"
             closeVal: +d.Close,
-            // Keep a clean version of the date string for the table display
             formattedDate: d.Date.split(' ')[0]
         }));
     }
 
-    /**
-     * SECTION: MODULE: DATATABLES
-     * Configures and initializes the jQuery DataTables plugin.
-     * This function takes our translated data and builds the interactive table.
-     */
     function InitDataTable(data) {
         try {
-            // Safety check: ensure target element exists in DOM
             if (!document.getElementById('btc-table')) return;
-            
-            // This command activates the DataTables plugin on our table
             $('#btc-table').DataTable({
                 data: data,
                 columns: [
-                    { data: "formattedDate" }, // First column: Date
+                    { data: "formattedDate" },
                     { 
-                        data: "closeVal", // Second column: Price
-                        // This 'render' part adds the '$' and commas to the numbers automatically
+                        data: "closeVal",
                         render: $.fn.dataTable.render.number(',', '.', 2, '$')
                     }
                 ],
-                order: [[0, 'desc']], // Start with the newest dates at the top
-                pageLength: 10         // Show only 10 rows at a time
+                order: [[0, 'desc']],
+                pageLength: 10
             });
         } catch (err) {
             console.error("DataTable Initialization Failed:", err);
         }
     }
 
-    /**
-     * SECTION: MODULE: D3 CHART
-     * Constructs a responsive SVG line chart using D3.js.
-     * This function uses math to draw the price line on the screen.
-     */
     function InitD3Chart(data) {
         try {
             const container = document.getElementById('chart-container');
             if (!container) return;
 
-            // Define chart dimensions and margins for axis labels
-            // Set up the margins so the graph doesn't hit the edges of the box
             const margin = {top: 20, right: 30, bottom: 40, left: 60};
             const width = container.offsetWidth - margin.left - margin.right;
             const height = 400 - margin.top - margin.bottom;
 
-            // Create SVG element and group container
-            // Select the container and place an 'SVG' (drawing canvas) inside it
             const svg = d3.select("#chart-container")
                 .append("svg")
                 .attr("width", width + margin.left + margin.right)
@@ -292,41 +213,28 @@
                 .append("g")
                 .attr("transform", `translate(${margin.left},${margin.top})`);
 
-            // Initialize Time Scale for X-Axis
-            // SCALES: These are like 'map legends'. 
-            // They translate a Price (e.g., $50,000) into a pixel position on your screen.
             const x = d3.scaleTime()
-                .domain(d3.extent(data, d => d.dateObj)) // Min and Max dates
-                .range([0, width]); // Maps them from left to right
+                .domain(d3.extent(data, d => d.dateObj))
+                .range([0, width]);
             
-            // Initialize Linear Scale for Y-Axis (Prices)
             const y = d3.scaleLinear()
-                .domain([0, d3.max(data, d => d.closeVal)]) // From 0 to the highest price
-                .range([height, 0]); // Maps them from bottom to top
+                .domain([0, d3.max(data, d => d.closeVal)])
+                .range([height, 0]);
 
-            // Render X-Axis at the bottom
-            // Draw the Bottom Axis (Dates)
             svg.append("g")
                 .attr("transform", `translate(0,${height})`)
                 .call(d3.axisBottom(x).ticks(6))
                 .attr("class", "axis-label");
 
-            // Render Y-Axis with currency formatting
-            // Draw the Left Axis (Prices)
             svg.append("g")
                 .call(d3.axisLeft(y).tickFormat(d => "$" + d3.format(",.0f")(d)))
                 .attr("class", "axis-label");
 
-            // Define the line generator function
-            // Define how the line should be drawn (connect Date to Price)
             const line = d3.line()
                 .x(d => x(d.dateObj))
                 .y(d => y(d.closeVal));
 
-            // Append the line path to the SVG
-            // Actually draw the blue line path on the canvas
             svg.append("path")
-                // We sort the data by date first so the line goes left-to-right
                 .datum(data.sort((a, b) => a.dateObj - b.dateObj))
                 .attr("class", "line")
                 .attr("d", line);
@@ -336,26 +244,76 @@
     }
 
     /**
-     * SECTION: MAIN EXECUTION FLOW
-     * Immediately Invoked Function Expression (IIFE) to handle async logic.
-     * This is the "Start Button" of the script. 
-     * It runs automatically as soon as the page loads.
+     * SECTION: MODULE: APEX CHART
+     * Constructs an interactive chart using ApexCharts.
      */
+    function InitApexChart(data) {
+        try {
+            const container = document.getElementById('apex-chart-container');
+            if (!container) return;
+
+            // Prepare data: ApexCharts expects an array of [timestamp, value]
+            const seriesData = data.map(d => [d.dateObj.getTime(), d.closeVal]);
+            seriesData.sort((a, b) => a[0] - b[0]);
+
+            const options = {
+                series: [{
+                    name: 'BTC Price',
+                    data: seriesData
+                }],
+                chart: {
+                    type: 'area',
+                    height: 350,
+                    zoom: { enabled: true },
+                    toolbar: { show: true }
+                },
+                dataLabels: { enabled: false },
+                stroke: { curve: 'smooth', width: 2 },
+                xaxis: {
+                    type: 'datetime',
+                    labels: { style: { colors: '#718096' } }
+                },
+                yaxis: {
+                    labels: {
+                        formatter: (val) => "$" + val.toLocaleString(),
+                        style: { colors: '#718096' }
+                    }
+                },
+                colors: ['#3182ce'],
+                fill: {
+                    type: 'gradient',
+                    gradient: {
+                        shadeIntensity: 1,
+                        opacityFrom: 0.4,
+                        opacityTo: 0.1,
+                        stops: [0, 90, 100]
+                    }
+                },
+                tooltip: {
+                    x: { format: 'dd MMM yyyy' },
+                    y: { formatter: (val) => "$" + val.toLocaleString() }
+                }
+            };
+
+            const chart = new ApexCharts(container, options);
+            chart.render();
+        } catch (err) {
+            console.error("ApexChart Initialization Failed:", err);
+        }
+    }
+
     (async () => {
         try {
-            // Step 1: Request data from source
             const raw_data = await load_data("btc_full_history_to_today.csv");
-            
-            // Step 2: Transform raw strings into usable formats
             const parsed_data = parse_data(raw_data);
 
-            // Step 3: Use that data to build the Table and the Chart
             InitDataTable(parsed_data);
             InitD3Chart(parsed_data);
             
+            // Execute Apex Chart after D3
+            InitApexChart(parsed_data);
+            
         } catch (err) {
-            // Global error handler for data loading/parsing failures
-            // If the CSV file is missing or the internet cuts out, this handles the error
             console.error("Critical Failure: Data could not be loaded or parsed.", err);
         }
     })();
