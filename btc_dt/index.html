@@ -193,6 +193,31 @@
     }
 
     /**
+     * MODULE: DATA AUGMENTATION
+     * Adds technical indicators to the dataset.
+     */
+    function add_200dma(data) {
+        // Ensure data is sorted chronologically for accurate rolling calculation
+        const sortedData = [...data].sort((a, b) => a.dateObj - b.dateObj);
+
+        return sortedData.map((d, i, arr) => {
+            let mavg = null;
+            
+            // Only calculate if we have at least 200 data points of history
+            if (i >= 199) {
+                const window = arr.slice(i - 199, i + 1);
+                const sum = window.reduce((acc, curr) => acc + curr.closeVal, 0);
+                mavg = sum / 200;
+            }
+
+            return {
+                ...d,
+                dma200: mavg // New column added to each object
+            };
+        });
+    }
+
+    /**
      * MODULE: DATATABLES
      * Renders a searchable, sortable HTML table.
      */
@@ -288,17 +313,35 @@
             if (!container) return;
 
             // ApexCharts specific format: [timestamp_in_ms, value]
-            const seriesData = data.map(d => [d.dateObj.getTime(), d.closeVal]).sort((a, b) => a[0] - b[0]);
+            const sorted = [...data].sort((a, b) => a.dateObj - b.dateObj);
+        
+            const btcSeries = sorted.map(d => [d.dateObj.getTime(), d.closeVal]);
+            const dmaSeries = sorted.map(d => [d.dateObj.getTime(), d.dma200]); // Keep nulls to maintain array alignment
 
             const options = {
-                series: [{ name: 'BTC Price', data: seriesData }],
+                series: [
+                    /* LINE 1: BTC PRICE */
+                    { name: 'BTC Price', data: btcSeries },
+                    /* LINE 2: 200 DAY MOVING AVERAGE */
+                    { name: '200 DMA', data: dmaSeries }
+                ],
                 chart: { 
-                    type: 'area', 
+                    type: 'line', 
                     height: 350, 
                     zoom: { enabled: true } // Interactive zooming enabled by default
                 },
-                dataLabels: { enabled: false },
-                stroke: { curve: 'smooth', width: 2 },
+                tooltip: {
+                    shared: true,     // Essential: combines all series into one tooltip
+                    intersect: false, // Essential: triggers based on vertical hover area
+                    x: {
+                        format: 'MMM dd yyyy'
+                    }
+                },
+                dataLabels: { enabled: false },  // labels every data point. would be too noisy to turn this on because the data has more datapoint than can be displayed on the graph neatly
+                stroke: {
+                  curve: 'smooth'
+                , width: [1, 1] // 2px for BTC Price, 1px for 200 DMA
+                },
                 xaxis: { 
                     type: 'datetime', 
                     labels: { style: { colors: '#718096' } } 
@@ -309,13 +352,12 @@
                         style: { colors: '#718096' }
                     }
                 },
-                colors: ['#3182ce'],
+                colors: [
+                  '#3182ce' // Blue for BTC
+                , '#F6AD55' // Yellow/Orange for 200 DMA
+                ],
                 fill: {
-                    type: 'gradient',
-                    gradient: { 
-                        opacityFrom: 0.4, 
-                        opacityTo: 0.1 
-                    }
+                    type: 'none'
                 }
             };
 
@@ -340,10 +382,15 @@
             console.log("Parsed data sample (first 4 rows):");
             console.table(parsed_data.slice(0, 4));
 
+            // --- ADDITIVE MODULE START ---
+            // This transforms the data before passing it to UI components
+            const augmented_data = add_200dma(parsed_data);
+            // --- ADDITIVE MODULE END ---
+
             // Step 3: Initialize all UI components with the same dataset
-            InitDataTable(parsed_data);
-            InitD3Chart(parsed_data);
-            InitApexChart(parsed_data);
+            InitDataTable(augmented_data);
+            InitD3Chart(augmented_data);
+            InitApexChart(augmented_data);
 
             console.log("All UI components initialized.");
         } catch (err) {
