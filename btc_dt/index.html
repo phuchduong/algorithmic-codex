@@ -162,11 +162,24 @@
      * Common logic for fetching and sanitizing data.
      */
     async function load_data(url) {
-        // Uses d3.csv helper to fetch and parse CSV into an array of objects
-        return await d3.csv(url);
+        try {
+            // Uses d3.csv helper to fetch and parse CSV into an array of objects
+            const data = await d3.csv(url);
+            console.log("Loaded data successfully from: " + url);
+            return data;
+        } catch (err) {
+            console.error("Failed to load data from: " + url, err);
+            throw err;
+        }
     }
 
     function parse_data(data) {
+        console.log("Data parsed. Total records: " + data.length);
+        
+        // Print a 4-line sample of the raw data to the console
+        console.log("Raw data sample (first 4 rows):");
+        console.table(data.slice(0, 4));
+
         const parseTime = d3.timeParse("%Y-%m-%d");
         return data.map(d => ({
             ...d,
@@ -202,6 +215,7 @@
                 order: [[0, 'desc']], // Sort by date descending by default
                 pageLength: 10
             });
+            console.log("DataTable initialized successfully.");
         } catch (err) { console.error("DataTable Error:", err); }
     }
 
@@ -259,6 +273,8 @@
                 .datum(data.sort((a, b) => a.dateObj - b.dateObj))
                 .attr("class", "line")
                 .attr("d", line);
+
+            console.log("D3 Chart rendered.");
         } catch (err) { console.error("D3 Error:", err); }
     }
 
@@ -304,6 +320,7 @@
             };
 
             new ApexCharts(container, options).render();
+            console.log("Apex Chart rendered.");
         } catch (err) { console.error("Apex Error:", err); }
     }
 
@@ -313,16 +330,22 @@
      */
     (async () => {
         try {
+            console.log("Starting page execution...");
+
             // Step 1: Fetch raw CSV
             const raw = await load_data("btc_full_history_to_today.csv");
             
             // Step 2: Parse and format
-            const data = parse_data(raw);
+            const parsed_data = parse_data(raw);
+            console.log("Parsed data sample (first 4 rows):");
+            console.table(parsed_data.slice(0, 4));
 
             // Step 3: Initialize all UI components with the same dataset
-            InitDataTable(data);
-            InitD3Chart(data);
-            InitApexChart(data);
+            InitDataTable(parsed_data);
+            InitD3Chart(parsed_data);
+            InitApexChart(parsed_data);
+
+            console.log("All UI components initialized.");
         } catch (err) {
             console.error("Main Execution Failed:", err);
         }
