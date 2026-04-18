@@ -37,10 +37,13 @@
             color: #1e272e; 
         }
 
+        /* --- END: CORE GLOBAL STYLES --- */
+
         /* --- DATA TABLE SECTION --- 
            Spacing for the jQuery DataTable area.
         */
         .table-section { margin-bottom: 40px; }
+        /* --- END: DATA TABLE SECTION --- 
 
         /* --- D3 CHART SECTION --- 
            Styles for the custom SVG elements rendered by D3.js.
@@ -60,9 +63,11 @@
             stroke-opacity: 0.7; 
             shape-rendering: crispEdges; /* Prevents blurry grid lines */
         }
+        /* --- END: D3 CHART SECTION --- 
 
         /* --- APEX CHART SECTION --- */
         .apex-chart-section { margin-bottom: 40px; width: 100%; }
+        /* --- END: APEX CHART SECTION --- */
 
         /* --- FOOTER STYLES --- 
            Grid-based layout for project links and author information.
@@ -97,9 +102,11 @@
         }
         .footer-list a { color: #3182ce; text-decoration: none; }
         .author-name { font-size: 1.1rem; font-weight: 700; color: #2d3748; margin-bottom: 10px; display: block; }
+        /* --- END: FOOTER STYLES --- 
 
         /* Mobile optimization: stack columns on small screens */
         @media (max-width: 600px) { .footer-grid { grid-template-columns: 1fr; gap: 30px; } }
+        /* END: Mobile optimization */
     </style>
 </head>
 <body>
@@ -107,6 +114,8 @@
 <div class="container">
     <h2>Bitcoin Price History</h2>
 
+
+    <!-- BEGIN: BTC DATA TABLE -->
     <section class="table-section">
         <table id="btc-table" class="display" style="width:100%">
             <thead>
@@ -118,17 +127,26 @@
             <tbody></tbody>
         </table>
     </section>
+    <!-- END: BTC DATA TABLE -->
 
+
+    <!-- BEGIN: BTC D3 CHART -->
     <section class="d3-chart-section">
         <h3 class="chart-section-header">BTC Price - D3.js</h3>
         <div id="d3-chart-container"></div>
     </section>
+    <!-- END: BTC D3 CHART -->
 
+
+    <!-- BEGIN: BTC APEX CHART -->
     <section class="apex-chart-section">
         <h3 class="chart-section-header">BTC Price - ApexCharts</h3>
         <div id="apex-chart-container"></div>
     </section>
+    <!-- END: BTC APEX CHART -->
 
+
+    <!-- BEGIN: FOOTER -->
     <footer>
         <div class="footer-grid">
             <div class="footer-section">
@@ -149,11 +167,20 @@
             </div>
         </div>
     </footer>
-</div>
+    <!-- END: FOOTER -->
 
+</div> <!-- div class="container" -->
+
+<!-- JQUERY -->
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+
+<!-- JQUERY DATA TABLES -->
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+<!-- D3.JS -->
 <script src="https://d3js.org/d3.v7.min.js"></script>
+
+<!-- APEX CHART -->
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
 <script>
@@ -191,6 +218,7 @@
             formattedDate: d.Date.split(' ')[0]
         }));
     }
+    /* END DATA UTILITIES */
 
     /**
      * MODULE: DATA AUGMENTATION
@@ -216,6 +244,7 @@
             };
         });
     }
+    /* END: DATA AUGMENTATION */
 
     /**
      * MODULE: DATATABLES
@@ -243,6 +272,7 @@
             console.log("DataTable initialized successfully.");
         } catch (err) { console.error("DataTable Error:", err); }
     }
+    /* END: DATATABLES */
 
     /**
      * MODULE: D3 CHART
@@ -302,6 +332,7 @@
             console.log("D3 Chart rendered.");
         } catch (err) { console.error("D3 Error:", err); }
     }
+    /* END: D3 CHART */
 
     /**
      * MODULE: APEX CHARTS
@@ -365,9 +396,10 @@
             console.log("Apex Chart rendered.");
         } catch (err) { console.error("Apex Error:", err); }
     }
+    /* END: APEX CHARTS */
 
     /**
-     * EXECUTION
+     * EXECUTION: MAIN FUNCTION
      * Main entry point using an IIFE (Immediately Invoked Function Expression) to handle async logic.
      */
     (async () => {
@@ -397,6 +429,7 @@
             console.error("Main Execution Failed:", err);
         }
     })();
+    /* END OF MAIN FUNCTION */
 </script>
 
 </body>
