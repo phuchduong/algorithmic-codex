@@ -9,43 +9,191 @@ Follow: https://www.twitter.com/keenthemes
 License: https://keenthemes.com/metronic/tailwind/docs/getting-started/license
 -->
 <!DOCTYPE html>
-<html class="h-full" data-kt-theme="true" data-kt-theme-mode="light" dir="ltr" lang="en">
+<!-- 
+  class="h-full":
+    This is a Tailwind CSS utility class that sets height: 100% on the root element. In modern web development, this is essential for layouts that require a full-height background or a sticky footer. Without this, the body might only be as tall as its content rather than filling the entire viewport.
+  data-kt-theme="true"
+    This is a custom data attribute used by the Metronic framework. It acts as a flag to initialize the framework's theme engine. JavaScript libraries often look for this attribute to determine if they should apply specific UI logic or component behaviors.
+  data-kt-theme-mode="light"
+    This attribute explicitly sets the visual state of the application. It tells the CSS and JS to apply light mode styling. Changing this value to "dark" typically triggers a theme switch across the entire interface via CSS variables.
+  dir="ltr"
+    The dir attribute specifies the base direction of the text. "ltr" stands for "left-to-right", which is standard for English and most Latin-based languages. Setting this explicitly helps the browser render layout components like margins and padding correctly, especially when creating mirrors for "rtl" (right-to-left) languages like Arabic.
+  lang="en"
+    The lang attribute identifies the primary language of the document as English. This is a critical metadata point for search engines to index the site correctly and for screen readers to use the appropriate pronunciation and accent when reading content to visually impaired users.
+-->
+<html
+  class="h-full"
+  data-kt-theme="true"
+  data-kt-theme-mode="light"
+  dir="ltr"
+  lang="en"
+>
  <head>
   <!-- A <base> tag acts as a starting point for every relative URL on your page. By setting it to ../../, you are telling the browser that for every image, script, or stylesheet you link, it should first go up two levels from the current folder. -->
   <!-- <base href="../../"> -->
   <title>
-   Metronic - Tailwind CSS
+   Metronic - Tailwind CSS - HTML Template 7
   </title>
   <meta charset="utf-8"/>
+  <!--
+    meta
+      This meta tag provides instructions to search engine crawlers (often called "robots" or "bots") regarding how they should treat the specific page they are currently visiting.
+    content="follow, index"
+      index: This tells search engines that they are allowed to include this page in their search results. If you were to change this to noindex, the page would be hidden from Google or Bing search results.
+      follow: This tells the crawler to follow the links found on this page. By following these links, the bot can discover other pages on your website or external sites, passing along "ranking credit" (often called link equity) to those destinations.
+      While most search engines default to "index, follow" if the tag is missing, explicitly including it ensures that your intentions are clear. It is a fundamental part of Search Engine Optimization (SEO).
+      Developers typically use the opposite configuration, <meta name="robots" content="noindex, nofollow">, for private pages like admin dashboards, staging environments, or "Thank You" pages that shouldn't appear in public search results.
+      It does not affect the visual layout of the page for users; it is purely a communication tool between your server and the automated systems that map the internet.
+   -->
   <meta content="follow, index" name="robots"/>
-  <link href="https://127.0.0.1:8001/metronic-html-starter-kit/layout-9/index.html" rel="canonical"/>
+  <!--
+    rel="canonical"
+      The canonical link tag tells search engines which version of a URL is the original or authoritative one. It is used to prevent problems caused by identical or duplicate content appearing on multiple URLs.
+
+      Why it is important
+      Search engines like Google generally dislike duplicate content because it makes it difficult to decide which version of a page to show in search results. If you have several URLs that lead to the same page, search engines might split the ranking power between them or choose the wrong version to display.
+
+      By defining a canonical URL, you are saying: "Even if you accessed this page via a different link, this is the official version I want you to index."
+
+      Common Use Cases
+      Protocol changes: Ensuring that both the http and https versions of a site point to one preferred version.
+
+      Tracking parameters: If a user visits your site through an ad link (e.g., index.html?utm_source=twitter), the canonical tag tells the browser to ignore the extra text at the end and treat it as the main index.html.
+
+      Multiple domains: If the same content is hosted across different domains, the tag directs all credit to the primary source.
+
+      The specific URL in your code
+      In your snippet, the URL is https://127.0.0.1:8001/metronic-html-starter-kit/layout-9/index.html.
+
+      It is worth noting that 127.0.0.1 is a "localhost" address, which means it points to your own computer. While this works for development, you should update this link to your actual website domain (e.g., https://www.yourdomain.com/...) before the site goes live. If you launch with a localhost canonical tag, search engines will not be able to index the page properly because they cannot visit your personal computer to verify the link.
+   -->
+  <!-- <link href="https://127.0.0.1:8001/metronic-html-starter-kit/layout-9/index.html" rel="canonical"/> -->
+  <link href="https://phuchduong.github.io/algorithmic-codex/metronics_theme_9_starter_kit/" rel="canonical"/>
+
+  <!-- 
+    viewport
+      This meta tag is one of the most important lines of code for modern web development. It controls how your website is displayed on mobile devices, tablets, and desktops by configuring the "viewport," which is the user's visible area of a web page.
+
+      width=device-width: This tells the browser to set the width of the page to follow the screen-width of the device. Without this, mobile browsers typically assume a desktop width (usually 980px) and then scale the entire page down, making text and buttons tiny and unreadable.
+
+      initial-scale=1: This sets the initial zoom level when the page is first loaded by the browser. A value of 1 ensures a 1:1 ratio between CSS pixels and device-independent pixels.
+
+      shrink-to-fit=no: This is a specific directive originally introduced for Safari on iOS 9. It prevents the browser from scaling down the content if the content is wider than the viewport. While less critical on modern browsers, it is often included for maximum compatibility to ensure the layout remains stable.
+
+      Before this tag existed, mobile phones struggled to display websites designed for large monitors. By including this line, you enable Responsive Design. This allows your CSS (and frameworks like Tailwind CSS) to use media queries effectively, ensuring that a sidebar on a desktop can transform into a toggle menu on a smartphone.
+
+      If you remove this tag, your "h-full" classes and mobile-responsive layouts will likely fail to trigger correctly on actual phones, as the device will pretend it is a much larger screen than it actually is.
+  -->
   <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport"/>
-  <meta content="" name="description"/>
-  <meta content="@keenthemes" name="twitter:site"/>
-  <meta content="@keenthemes" name="twitter:creator"/>
+
+  <!-- 
+  description: Description
+    This meta tag is a placeholder for a Meta Description. It is a brief summary of a website page that appears underneath the clickable title in search engine results.
+    Search engines typically display the first 150 to 160 characters of a description.
+  -->
+  <meta content="A starter kit for deploying Metronic layout #9 to GitHub Pages. Includes all necessary HTML boilerplate and configurations." name="description"/>
+
+  <!-- Twitter Cards protocol. -->
+  <!-- twitter:site: This identifies the main Twitter account associated with the website. -->
+  <meta content="@PhucHDuong" name="twitter:site"/>
+  <!-- twitter:creator: This identifies the specific content creator or author of the page. -->
+  <meta content="@PhucHDuong" name="twitter:creator"/>
+  <!-- twitter:card: This defines the layout of the post. The value summary_large_image tells the platform to display a prominent, full-width image above the title and description, which usually results in higher engagement than a small thumbnail. -->
   <meta content="summary_large_image" name="twitter:card"/>
-  <meta content="Metronic - Tailwind CSS " name="twitter:title"/>
-  <meta content="" name="twitter:description"/>
-  <meta content="assets/media/app/og-image.png" name="twitter:image"/>
-  <meta content="https://127.0.0.1:8001/metronic-html-starter-kit/layout-9/index.html" property="og:url"/>
+  <!-- twitter:title: This is the headline that appears on the card. It is often the same as your <title> tag, but you can change it here if you want a different headline for social media users. -->
+  <meta content="Metronic - Tailwind CSS - HTML Template 7" name="twitter:title"/>
+  <!-- twitter:description: Just like the standard meta description, this provides a brief summary of the page for the social media card. Should be updated to match the description. -->
+  <meta content="A starter kit for deploying Metronic layout #9 to GitHub Pages. Includes all necessary HTML boilerplate and configurations." name="twitter:description"/>
+  <!-- twitter:image: This provides the path to the specific image that should appear on the card. -->
+  <!-- <meta content="assets/media/app/og-image.png" name="twitter:image"/> -->
+  <meta content="https://phuchduong.github.io/algorithmic-codex/metronics_theme_9_starter_kit/assets/media/app/og-image.png" name="twitter:image"/>
+
+  <!--
+    Open Graph protocol.
+    og: tags are the industry standard used by Facebook, LinkedIn, Discord, Slack, and almost every other social media or messaging platform.
+  -->
+  <!-- og:url attribute defines the "permanent" or "canonical" URL for your page. It tells social media platforms exactly which link should be associated with the shared content.
+    Consolidating Engagement: If people share your site using different variations of the link (like yoursite.com vs yoursite.com/index.html), the og:url ensures that all likes, shares, and comments are grouped together under one single URL.
+    Link Consistency: It ensures that when someone clicks the "preview card" on Facebook or LinkedIn, they are sent to the exact address you specified here, rather than a temporary or tracked link.
+  -->
+  <!-- <meta content="https://127.0.0.1:8001/metronic-html-starter-kit/layout-9/index.html" property="og:url"/> -->
+  <meta content="https://phuchduong.github.io/algorithmic-codex/metronics_theme_9_starter_kit/" property="og:url"/>
+  <!-- og:locale: This tells social media crawlers the language and region of your content. It helps platforms provide the correct localized interface around your link. For example, if your site was in Vietnamese, you would use vi_VN so the platform knows how to categorize and display the content to the right audience. -->
   <meta content="en_US" property="og:locale"/>
+  <!-- og:type: This describes the nature of your content. This is the default type for most homepages. Other types include article, book, or video.movie. The type changes how the content is displayed; for instance, an article type might show the author and publication date in the link preview. -->
   <meta content="website" property="og:type"/>
-  <meta content="@keenthemes" property="og:site_name"/>
-  <meta content="Metronic - Tailwind CSS " property="og:title"/>
-  <meta content="" property="og:description"/>
-  <meta content="assets/media/app/og-image.png" property="og:image"/>
-  <link href="assets/media/app/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180"/>
-  <link href="assets/media/app/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png"/>
-  <link href="assets/media/app/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png"/>
-  <link href="assets/media/app/favicon.ico" rel="shortcut icon"/>
+  <!-- og:site_name: This is the name of the overall website or brand, rather than the specific page title.
+    Purpose: In a shared post, the site name usually appears in a smaller font above or below the main title. You should change this to something like "Algorithmic Codex" to match your project name.
+  -->
+  <meta content="Algorithmic Codex" property="og:site_name"/>
+  <!-- og:title: This is the "headline" of your social media card. -->
+  <meta content="Metronic - Tailwind CSS - HTML Template 7" property="og:title"/>
+  <!-- og:description: This is the short paragraph that appears under the title in a link preview. -->
+  <meta content="A starter kit for deploying Metronic layout #9 to GitHub Pages. Includes all necessary HTML boilerplate and configurations." property="og:description"/>
+  <!-- og:image: This defines the visual thumbnail for the link.
+    This is arguably the most important tag for engagement. It points to the image file that will be shown in the preview. -->
+  <!-- <meta content="assets/media/app/og-image.png" property="og:image"/> -->
+  <meta content="https://phuchduong.github.io/algorithmic-codex/metronics_theme_9_starter_kit/assets/media/app/og-image.png" property="og:image"/>
+
+  <!--
+    rel="apple-touch-icon"
+      This tag specifies the icon that appears when a user adds your website to the home screen of an iPhone or iPad.
+      rel="apple-touch-icon": This tells Safari and iOS that the linked image should be used as the application icon for the "Add to Home Screen" feature.
+      href="assets/media/app/apple-touch-icon.png": This is the path to the actual image file. Standard apple-touch-icons are usually PNG files and should not have any transparency (iOS will automatically add rounded corners).
+      sizes="180x180": This specifies the dimensions of the icon in pixels. 180x180 is the standard size for high-resolution "Retina" displays on modern iPhones.
+      If you do not include this tag, iOS will try to generate an icon by taking a tiny screenshot of your webpage, which often looks blurry or unprofessional. By providing a dedicated icon, you make your web application feel like a native app.
+  -->
+  <!-- <link href="assets/media/app/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180"/> -->
+  <link href="https://phuchduong.github.io/algorithmic-codex/metronics_theme_9_starter_kit/assets/media/app/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180"/>
+
+  <!-- 
+  Favicon
+    These tags define the Favicon, which is the small icon that appears in browser tabs, bookmarks, and history lists. They help users visually identify your website when they have multiple tabs open.
+   -->
+  <!-- favicon-32x32.png: This is the standard size for most modern desktop browser tabs. Using a PNG allows for better quality and transparency compared to older formats. -->
+  <!-- <link href="assets/media/app/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png"/> -->
+  <link href="https://phuchduong.github.io/algorithmic-codex/metronics_theme_9_starter_kit/assets/media/app/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png"/>
+  <!-- favicon-16x16.png: This smaller version is used in more cramped spaces, such as the address bar or within a folder in your bookmarks bar. -->
+  <!-- <link href="assets/media/app/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png"/> -->
+  <link href="https://phuchduong.github.io/algorithmic-codex/metronics_theme_9_starter_kit/assets/media/app/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png"/>
+  <!-- favicon.ico: This is a legacy format. The .ico file is unique because it can actually contain multiple sizes (16, 32, and 48 pixels) inside a single file. It is included here as a "fallback" for older browsers or specific windows services that might not support PNG icons. -->
+  <!-- <link href="assets/media/app/favicon.ico" rel="shortcut icon"/> -->
+  <link href="https://phuchduong.github.io/algorithmic-codex/metronics_theme_9_starter_kit/assets/media/app/favicon.ico" rel="shortcut icon"/>
+
+  <!-- Inter font family from Google Fonts
+    It allows you to use a high-quality, modern typeface that isn't pre-installed on most users' computers.
+      family=Inter: This specifies the name of the font. Inter is a popular variable font designed specifically for computer screens to improve readability.
+    wght@400;500;600;700: These are the specific "weights" or thicknesses being requested:
+      400: Regular (standard text)
+      500: Medium
+      600: Semi-bold
+      700: Bold
+    display=swap: This is a performance instruction. It tells the browser to show a standard system font (like Arial) immediately while the Inter font is still downloading. Once Inter is ready, the browser "swaps" it in. This prevents your website from appearing blank or invisible for a few seconds on slow connections.
+    rel="stylesheet" attribute tells the browser that the link is a CSS file. The browser will download the instructions from Google's servers and apply them so you can use font-family: 'Inter', sans-serif; in your CSS or Tailwind classes.
+  -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 
-  <!-- APEX CHARTS -->
+  <!-- APEX CHARTS
+    a popular JavaScript library used for creating interactive, responsive data visualizations.
+    Purpose: This file contains the necessary CSS to style the charts, tooltips, and legends. Without it, the charts might still function, but they will look broken—tooltips might appear as plain text at the bottom of the page, and the layout will be unformatted.
+    Using jsDelivr allows the file to load from a server geographically close to the user, often improving loading speeds.
+  -->
   <link href="https://cdn.jsdelivr.net/npm/apexcharts/dist/apexcharts.css" rel="stylesheet"/>
   <!-- <link href="assets/vendors/apexcharts/apexcharts.css" rel="stylesheet"/> -->
 
+  <!-- KeenIcons
+    It allows you to use icons across your dashboard (like home icons, user avatars, or settings gears) by using simple HTML classes.
+    Instead of loading hundreds of separate image files, this "bundle" packages all the icons into a single font or SVG set. It defines the size, weight, and alignment of the icons so they look consistent throughout the interface.
+   -->
   <link href="assets/vendors/keenicons/styles.bundle.css" rel="stylesheet"/>
-  <link href="assets/styles.css" rel="stylesheet"/>
+  <!-- styles.css
+    Main Stylesheet for your entire project.
+    This file contains all the CSS rules that define the look of your website, including colors, spacing, typography, and grid layouts.
+    Tailwind CSS Integration: In a Metronic project, this file is typically the output of the Tailwind CSS compiler. It takes all the utility classes you have used in your HTML (like h-full, flex, or bg-primary) and converts them into the final CSS that the browser can understand.
+    By placing styles.css last, the developer ensures that the final project styles have the "final say" over any default settings from other imported libraries.
+    MUST BE LAST OR SECOND TO LAST LINK REFERENCED
+   -->
+  <link href="assets/css/styles.css" rel="stylesheet"/>
  </head>
  <body class="antialiased flex h-full text-base text-foreground bg-background [--header-height:78px]">
   <!-- Theme Mode -->
