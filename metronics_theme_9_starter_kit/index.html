@@ -5008,6 +5008,41 @@ License: https://keenthemes.com/metronic/tailwind/docs/getting-started/license
     Theme Management: It handles the logic for the data-kt-theme-mode="light" attribute found in your root <html> tag, allowing the page to toggle between light and dark modes.
    -->
   <script src="assets/js/core.bundle.js"></script>
+
+  <!--
+  The provided JavaScript code is the source for KTUI, a custom UI component library. It is structured as a bundled, self-executing library that manages interactive web elements.
+
+  At a high level, this script provides the logic for:
+
+  1. Positioning and Layout (Popper.js)
+  The script includes an integrated version of Popper.js. This is a specialized engine used to calculate the position of "floating" elements like tooltips, dropdowns, and popovers, ensuring they remain visible within the browser viewport and don't get cut off by overflow boundaries.
+
+  2. UI Component Management
+  The library defines several core UI components through a structured class system:
+
+  Accordion: Manages expandable/collapsible content sections (e.g., FAQs) with support for smooth height transitions and "expand all" settings.
+
+  Collapse: Handles simple toggle visibility for elements, typically used for navigation menus or "read more" sections.
+
+  DataTable: A robust data management tool that provides:
+
+  Sorting: Reordering table rows based on column data (strings or numbers).
+
+  Pagination: Splitting large datasets into multiple pages.
+
+  Checkboxes: Managing row selection with "select all" functionality and state preservation.
+
+  Remote/Local Data: Support for fetching data via API requests or processing local HTML tables.
+
+  3. Core Framework Logic
+  Initialization: It automatically scans the Document Object Model (DOM) for specific HTML attributes (like data-kt-accordion or data-kt-datatable) and attaches the necessary JavaScript logic to them.
+
+  Event Handling: It includes a custom event system to trigger actions like show, shown, hide, and hidden, allowing developers to hook into the component lifecycles.
+
+  State Management: It can save the state of a component (like a table's current page or sort order) to the browser, so the settings persist even after a page refresh.
+
+  Contains default dark/light mode in: o._defaultConfig={mode:"dark"}
+  -->
   <script src="assets/vendors/ktui/ktui.min.js"></script>
 
   <!-- APEX CHARTS -->
